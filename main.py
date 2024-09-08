@@ -20,6 +20,30 @@ from datetime import datetime
 from datetime import timedelta
 import json as js
 import os
+todo_list_folder = os.getcwd() + "/todo lists"
+
+#* this function creates the folder have the to do list json files at this file location also function creates json files in folder 
+def json_file_maker():
+    paths = []
+    try: 
+        os.mkdir(todo_list_folder)
+    except FileExistsError:
+        pass
+    with open(todo_list_folder + "/todo_list.json","w",encoding="utf-8") as file:
+        paths.append(os.path.abspath(todo_list_folder +"/todo_list.json")) 
+        file.write("[]")
+
+    with open(todo_list_folder + "/completed_tasks.json","w",encoding="utf-8") as file:
+        paths.append(os.path.abspath(todo_list_folder + "/completed_tasks.json")) 
+        file.write("[]")
+    
+    with open(todo_list_folder + "/not_completed_tasks.json","w",encoding="utf-8") as file:
+        paths.append(os.path.abspath(todo_list_folder + "/not_completed_tasks.json")) 
+        file.write("[]")
+    return paths
+
+json_files_paths = json_file_maker()
+
 
 
 class todo:
