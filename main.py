@@ -44,5 +44,61 @@ def json_files_maker(path):
         os.mkdir("todo_lists")
         os.system(f"attrib +h {'todo_lists'}")
         files() 
-
 json_files_maker(local_path)
+
+class todo_repo:
+    def __init__(self,task:str ,date: int, formatter: str):
+        """
+        task : a str param. data about task
+        date: this param should be a int. day week or hours
+        formmatter: this param for format the date datas 
+            "hour" - "day" - "week"
+        """
+        self.work = task
+        self.deadline = date
+        self.formatter = formatter
+        self.dates = {"start date": None , "deadline": None , "finish date" : None}
+    
+    def deadline_maker(self):
+        start_date = datetime.strptime(self.dates["start date"], "%c")
+
+        if self.formatter == "hour":
+            #*calculation of deadline
+            deadline =  start_date + timedelta(hours = self.deadline )
+            
+            #* timedelta object changed to datetime object
+            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+            self.dates["deadline"] = datetime.ctime(deadline_object)
+            
+        elif self.formatter == "day": 
+            deadline =  start_date + timedelta(days = self.deadline )
+            
+            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+            self.dates["deadline"] = datetime.ctime(deadline_object)
+
+        elif self.formatter == "week": 
+            deadline =  start_date + timedelta(week = self.deadline )
+
+            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+            self.dates["deadline"] = datetime.ctime(deadline_object)
+            pass
+
+    
+    def date_maker(self):
+        now = datetime.now()
+        self.dates["start date"] = datetime.ctime(now)
+
+        # self.deadline_maker()
+     
+
+
+
+x = todo_repo("ggd",2,"day")
+x.date_maker()
+print(x.dates)
+
+x.deadline_maker()
+print(x.dates)
+
+
+
