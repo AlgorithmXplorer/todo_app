@@ -20,52 +20,29 @@ from datetime import datetime
 from datetime import timedelta
 import json as js
 import os
-todo_list_folder = os.getcwd() + "/todo lists"
 
-#* this function creates the folder have the to do list json files at this file location also function creates json files in folder 
-def json_file_maker():
-    paths = []
-    try: 
-        os.mkdir(todo_list_folder)
-    except FileExistsError:
-        pass
-    with open(todo_list_folder + "/todo_list.json","w",encoding="utf-8") as file:
-        paths.append(os.path.abspath(todo_list_folder +"/todo_list.json")) 
-        file.write("[]")
+local_path = os.getcwd()
 
-    with open(todo_list_folder + "/completed_tasks.json","w",encoding="utf-8") as file:
-        paths.append(os.path.abspath(todo_list_folder + "/completed_tasks.json")) 
-        file.write("[]")
+def json_files_maker(path):
+    folder_path = f"{path}/todo_lists"
+
+    def files():
+        
+        os.chdir(folder_path)
+        
+        with open(folder_path + "/todo_list.json" , "w" , encoding= "utf-8") as file: 
+            file.write("[]")
+        with open(folder_path + "/uncompleted_todos.json" , "w" , encoding= "utf-8") as file: 
+            file.write("[]")
+        with open(folder_path + "/completed_todos.json" , "w" , encoding= "utf-8") as file: 
+            file.write("[]")
+
     
-    with open(todo_list_folder + "/not_completed_tasks.json","w",encoding="utf-8") as file:
-        paths.append(os.path.abspath(todo_list_folder + "/not_completed_tasks.json")) 
-        file.write("[]")
-    return paths
+    if os.path.exists("todo_lists"):
+        files() 
+    else: 
+        os.mkdir("todo_lists")
+        os.system(f"attrib +h {'todo_lists'}")
+        files() 
 
-json_files_paths = json_file_maker()
-
-
-
-class todo:
-    def __init__(self,work:str,final_date:dict):
-
-        """
-        work:  work to be done
-        finish date : example {"hours": 1} or {"days" : 1}
-        """
-        self.work = work
-        self.time_mode = "%H:%M  %d(%a)/%b/%Y"
-        self.time =  datetime.now()
-        self.start_date =self.time.strftime(self.time_mode)
-        try:
-            final = self.time + timedelta(hours= final_date["hours"] ) 
-        except KeyError: 
-            final = self.time + timedelta(days= final_date["days"] ) 
-
-        self.fin_date = final
-        self.finish_date = self.fin_date.strftime(self.time_mode)
-
-
-
-
-
+json_files_maker(local_path)
