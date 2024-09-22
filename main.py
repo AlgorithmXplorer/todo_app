@@ -23,11 +23,14 @@ import os
 
 local_path = os.getcwd()
 
+#* this function makes secret todo folder and makes todo json files in his created folder 
+
 def json_files_maker(path):
+    #* got the folder path
     folder_path = f"{path}/todo_lists"
 
-    def files():
-        
+    #* this capsule function makse json files and write "[]" in json files
+    def files():    
         os.chdir(folder_path)
         
         with open(folder_path + "/todo_list.json" , "w" , encoding= "utf-8") as file: 
@@ -37,68 +40,67 @@ def json_files_maker(path):
         with open(folder_path + "/completed_todos.json" , "w" , encoding= "utf-8") as file: 
             file.write("[]")
 
-    
+    #* control of the folder
     if os.path.exists("todo_lists"):
-        files() 
-    else: 
+        pass
+    else: #* makes secret folder if there is not folder  
         os.mkdir("todo_lists")
         os.system(f"attrib +h {'todo_lists'}")
         files() 
 json_files_maker(local_path)
 
 class todo_repo:
-    def __init__(self,task:str ,date: int, formatter: str):
+    def __init__(self,task:str ,deadline: dict):
         """
         task : a str param. data about task
-        date: this param should be a int. day week or hours
-        formmatter: this param for format the date datas 
-            "hour" - "day" - "week"
+        deadline: this param should be a dicti. this dicti should has four data. 
+            {"minute": -minute number- , "hour": -hour number- , "day": -day number- , "week": -week number-}
         """
         self.work = task
-        self.deadline = date
-        self.formatter = formatter
+        self.deadline = deadline 
         self.dates = {"start date": None , "deadline": None , "finish date" : None}
     
     def deadline_maker(self):
-        start_date = datetime.strptime(self.dates["start date"], "%c")
+        #* start date got beacouse deadline will calculate on start date
+        deadline = datetime.strptime(self.dates["start date"], "%c")
+        
+        #*this for loop gets date datas (minute, hours, days and weeks) and calculates deadline
+        for key,value in self.deadline.items():
 
-        if self.formatter == "hour":
-            #*calculation of deadline
-            deadline =  start_date + timedelta(hours = self.deadline )
+            if key == "minute": 
+                #* deadline item added to start date so calculated the deadline
+                deadline += timedelta(minutes = value )
+                
+                #* timedelta object changed to datetime object  
+                deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+                self.dates["deadline"] = datetime.ctime(deadline_object)
             
-            #* timedelta object changed to datetime object
-            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
-            self.dates["deadline"] = datetime.ctime(deadline_object)
-            
-        elif self.formatter == "day": 
-            deadline =  start_date + timedelta(days = self.deadline )
-            
-            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
-            self.dates["deadline"] = datetime.ctime(deadline_object)
+            elif key == "hour":
+                deadline += timedelta(hours = value )
+                
+                deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+                self.dates["deadline"] = datetime.ctime(deadline_object)
+                
+            elif key == "day": 
+                deadline += timedelta(days = value )
+                
+                deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+                self.dates["deadline"] = datetime.ctime(deadline_object)
 
-        elif self.formatter == "week": 
-            deadline =  start_date + timedelta(week = self.deadline )
+            elif key == "week": 
+                deadline += timedelta(weeks = value )
 
-            deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
-            self.dates["deadline"] = datetime.ctime(deadline_object)
-            pass
+                deadline_object = datetime.strptime(str(deadline) , "%Y-%m-%d %H:%M:%S")
+                self.dates["deadline"] = datetime.ctime(deadline_object)
 
-    
+    #* creates start date of tasks
     def date_maker(self):
         now = datetime.now()
         self.dates["start date"] = datetime.ctime(now)
 
-        # self.deadline_maker()
-     
-
-
-
-x = todo_repo("ggd",2,"day")
+x = todo_repo("dwsıjhdc",{"minute" : 10,"hour": 7,"day": 1,"week": 1})
 x.date_maker()
-print(x.dates)
 
 x.deadline_maker()
-print(x.dates)
-
 
 
