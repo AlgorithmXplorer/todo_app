@@ -109,11 +109,24 @@ class todo_repo:
         self.dates["start date"] = datetime.ctime(now)
 
 class to_do_saver:
-    def __init__(self,path):
-        pass
+    def __init__(self,object: todo_repo ,paths: list):
+        self.paths = paths
+        self.object = object
+        self.datas = self.data_getter(self.paths)
 
-    def save_todo(self):
-        pass
+    #* this function collect datas from JSON files for Operations 
+    def data_getter(self,paths):
+        with open(paths[0] , "r+" , encoding="utf-8") as file:
+            todo_list = js.load(file)
+        
+        with open(paths[1] , "r+" , encoding="utf-8") as file:
+            completed_todo_list = js.load(file)
+        
+        with open(paths[2] , "r+" , encoding="utf-8") as file:
+            uncompleted_todo_list = js.load(file)
+        return [todo_list , completed_todo_list , uncompleted_todo_list]
+        
+        
 
 
 
