@@ -46,20 +46,30 @@ def json_files_maker(path):
     else: #* makes secret folder if there is not folder  
         os.mkdir("todo_lists")
         os.system(f"attrib +h {'todo_lists'}")
-        files() 
-json_files_maker(local_path)
+        files()
+    json_files = [folder_path + "/todo_list.json", folder_path + "/completed_todos.json" , folder_path + "/uncompleted_todos.json"] 
+    return json_files
+print(json_files_maker(local_path))
 
 class todo_repo:
+
     def __init__(self,task:str ,deadline: dict):
         """
         task : a str param. data about task
         deadline: this param should be a dicti. this dicti should has four data. 
             {"minute": -minute number- , "hour": -hour number- , "day": -day number- , "week": -week number-}
+            there can be one of them or all of them. it is user's choice
         """
         self.work = task
         self.deadline = deadline 
         self.dates = {"start date": None , "deadline": None , "finish date" : None}
+        self.error_handing(self.deadline)
     
+    #* error_handing function chechs lenght of dictionary becaouse the deadline cant be calculated if the dictionary is empty
+    def error_handing(self, dates: dict):
+        if len(dates) == 0:
+            raise ValueError("dict must include date data ")
+
     def deadline_maker(self):
         #* start date got beacouse deadline will calculate on start date
         deadline = datetime.strptime(self.dates["start date"], "%c")
@@ -98,9 +108,21 @@ class todo_repo:
         now = datetime.now()
         self.dates["start date"] = datetime.ctime(now)
 
-x = todo_repo("dwsıjhdc",{"minute" : 10,"hour": 7,"day": 1,"week": 1})
-x.date_maker()
+class to_do_saver:
+    def __init__(self,path):
+        pass
 
-x.deadline_maker()
+    def save_todo(self):
+        pass
 
 
+
+
+
+
+
+# x = todo_repo("dwsıjhdc",{})
+# x.date_maker()
+
+# x.deadline_maker()
+# print(x.dates)
