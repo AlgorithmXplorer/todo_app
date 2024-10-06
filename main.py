@@ -49,7 +49,7 @@ def json_files_maker(path):
         files()
     json_files = [folder_path + "/todo_list.json", folder_path + "/completed_todos.json" , folder_path + "/uncompleted_todos.json"] 
     return json_files
-print(json_files_maker(local_path))
+JSON_paths = json_files_maker(local_path)
 
 class todo_repo:
 
@@ -110,8 +110,12 @@ class todo_repo:
 
 class to_do_saver:
     def __init__(self,object: todo_repo ,paths: list):
-        self.paths = paths
+        #* date and deadline were created using the recived object 
         self.object = object
+        self.object.date_maker()
+        self.object.deadline_maker()
+        
+        self.paths = paths
         self.datas = self.data_getter(self.paths)
 
     #* this function collect datas from JSON files for Operations 
@@ -125,17 +129,16 @@ class to_do_saver:
         with open(paths[2] , "r+" , encoding="utf-8") as file:
             uncompleted_todo_list = js.load(file)
         return [todo_list , completed_todo_list , uncompleted_todo_list]
+    
+    def save_todo(self):
+        self.datas[0].append(self.object.__dict__)
+        with open(self.paths[0] , "w" , encoding= "utf-8") as file:
+            js.dump(self.datas[0] , file , indent=4 , sort_keys= False)
         
-        
 
+x = todo_repo("dwsıjhdc",{"hour" : 4, "week": 2})
 
-
-
-
-
-
-# x = todo_repo("dwsıjhdc",{})
-# x.date_maker()
-
-# x.deadline_maker()
-# print(x.dates)
+y = to_do_saver(x,JSON_paths)
+# print(y.datas)
+y.save_todo()
+print(y.datas)
