@@ -110,6 +110,10 @@ class todo_repo:
 
 class to_do_saver:
     def __init__(self,object: todo_repo ,paths: list):
+        """
+            The object parameter is used like a repository.
+            The paths parameter is needed to access the JSON files.        
+        """
         #* date and deadline were created using the recived object 
         self.object = object
         self.object.date_maker()
@@ -134,11 +138,34 @@ class to_do_saver:
         self.datas[0].append(self.object.__dict__)
         with open(self.paths[0] , "w" , encoding= "utf-8") as file:
             js.dump(self.datas[0] , file , indent=4 , sort_keys= False)
+    
+    def read_todo(self,choice: int):
+        if choice == 1:
+            todos = self.datas[0]
+            for index,todo in enumerate(todos,1):
+                print(f"{'*' * 20} {index} {'*' * 20}")
+                print(js.dumps(todo,indent=4,sort_keys=False) , end="\n\n")
+        elif choice == 2:
+            todos = self.datas[1]
+            for index,todo in enumerate(todos,1):
+                print(f"{'*' * 20} {index} {'*' * 20}")
+                print(js.dumps(todo,indent=4,sort_keys=False) , end="\n\n")
+        elif choice == 3:
+            todos = self.datas[2]
+            for index,todo in enumerate(todos,1):
+                print(f"{'*' * 20} {index} {'*' * 20}")
+                print(js.dumps(todo,indent=4,sort_keys=False) , end="\n\n")
+
+            
+
+    # def complete_task(): 
+    #     pass
+
+        
         
 
 x = todo_repo("dwsıjhdc",{"hour" : 4, "week": 2})
 
 y = to_do_saver(x,JSON_paths)
-# print(y.datas)
-y.save_todo()
-print(y.datas)
+# y.save_todo()
+y.read_todo(1)
