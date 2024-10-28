@@ -23,8 +23,7 @@ import os
 
 local_path = os.getcwd()
 
-#* this function makes secret todo folder and makes todo json files in his created folder 
-
+#* this function makes secret todo folder and makes todo json files in his created folder  
 def json_files_maker(path):
     #* got the folder path
     folder_path = f"{path}/todo_lists"
@@ -51,17 +50,20 @@ def json_files_maker(path):
     return json_files
 JSON_paths = json_files_maker(local_path)
 
+
+
 class todo_repo:
 
-    def __init__(self,task:str ,deadline: dict):
+    def __init__(self,work:str ,deadline: dict):
         """
-        task : a str param. data about task
-        deadline: this param should be a dicti. this dicti should has four data. 
-            {"minute": -minute number- , "hour": -hour number- , "day": -day number- , "week": -week number-}
-            there can be one of them or all of them. it is user's choice
+        work : a str param. data about task\n
+        deadline: this param should be a dicti. this dicti should has four data. \n
+            {"minute": -minute number- , "hour": -hour number- , "day": -day number- , "week": -week number-}\n
+        \t there can be one of them or all of them. it is user's choice
         """
-        self.work = task
+        self.work = work
         self.deadline = deadline 
+        self.is_it_done = None 
         self.dates = {"start date": None , "deadline": None , "finish date" : None}
         self.error_handing(self.deadline)
     
@@ -108,11 +110,11 @@ class todo_repo:
         now = datetime.now()
         self.dates["start date"] = datetime.ctime(now)
 
-class to_do_saver:
+class todo_saver:
     def __init__(self,object: todo_repo ,paths: list):
         """
-            The object parameter is used like a repository.
-            The paths parameter is needed to access the JSON files.        
+            The object parameter is used like a repository.\n
+            The paths parameter is needed to access the JSON files.\n        
         """
         #* date and deadline were created using the recived object 
         self.object = object
@@ -121,6 +123,9 @@ class to_do_saver:
         
         self.paths = paths
         self.datas = self.data_getter(self.paths)
+        for i in range(len(self.datas[0])):    
+            self.timeout_controller()
+            
 
     #* this function collect datas from JSON files for Operations 
     def data_getter(self,paths):
@@ -140,6 +145,11 @@ class to_do_saver:
             js.dump(self.datas[0] , file , indent=4 , sort_keys= False)
     
     def read_todo(self,choice: int):
+        """
+        if the user's choice is 1 ,it will read to-do list JSON file \n
+        if the user's choice is 2 ,it will read completed to-do list JSON file\n
+        if the user's choice is 3 ,it will read uncompleted to-do list JSON file\n
+        """
         if choice == 1:
             todos = self.datas[0]
             for index,todo in enumerate(todos,1):
@@ -156,16 +166,35 @@ class to_do_saver:
                 print(f"{'*' * 20} {index} {'*' * 20}")
                 print(js.dumps(todo,indent=4,sort_keys=False) , end="\n\n")
 
-            
-
-    # def complete_task(): 
-    #     pass
-
+    def delete_todo(self,index):
+        todo = self.datas[0][index]
+        self.datas[0].remove(todo)
+        todo["is_it_done"] = False
         
+        self.datas[2].append(todo)
         
+        with open(self.paths[0] , "w", encoding="utf-8") as file:
+            js.dump(self.datas[0],file, indent=4,sort_keys=False)
 
-x = todo_repo("dwsıjhdc",{"hour" : 4, "week": 2})
+        with open(self.paths[2] , "w", encoding="utf-8") as file:
+            js.dump(self.datas[2],file, indent=4,sort_keys=False)
 
-y = to_do_saver(x,JSON_paths)
+    def timeout_controller(self):
+        today = datetime.now()
+        for index , todo in enumerate(self.datas[0]):
+            deadline = todo["dates"]["deadline"]
+            deadline = datetime.strptime(deadline,"%c")
+            date_difference =  deadline - today
+            if date_difference.days < 0:
+                self.delete_todo(index=index)
+                descp = f"""the "{todo['work']}" has been timed out so it has been added to uncompleted TODO list\nstart date: {todo['dates']['start date']}\ndeadline: {todo['dates']['deadline']}\ntoday: {datetime.ctime(datetime.now())}"""
+                print(descp,end="\n\n")
+                break
+       
+
+
+x = todo_repo("try",{"day" : 1})
+
+y = todo_saver(x,JSON_paths)
 # y.save_todo()
-y.read_todo(1)
+y.read_todo(3)
