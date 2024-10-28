@@ -123,6 +123,7 @@ class todo_saver:
         
         self.paths = paths
         self.datas = self.data_getter(self.paths)
+        #* "timeout controller" function finds uncompleted todo and retrieved them . the retrieved todos are saved to uncompleted_todos.json file  
         for i in range(len(self.datas[0])):    
             self.timeout_controller()
             
